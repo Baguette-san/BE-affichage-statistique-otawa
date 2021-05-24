@@ -1,5 +1,7 @@
 var ID_NOM_FICHIER = "inputBinaire";
 var ID_REPONSE_SERVEUR = "server_answer";
+var GRAPH_WIDTH = 800;
+var GRAPH_HEIGHT = 1000;
 
 //Pour la fonction de coloration
 var labels = ['ipet-total_time', 'ipet-total_count', ]; 
@@ -51,29 +53,52 @@ function afficherGrapheMemeFenetre(element){
   answerDiv.append(element);
   traitementReponseHTML(answerDiv);
   traitementGraphHTML(answerDiv);
-  answerDiv.style.transform = "scale(0.9, 0.9)";
+  answerDiv.style.transform = "scale(0.9, 0.9)"; //Faire en sorte de lire les valeurs de width et height (regex) et de scale pour que ça rentre parfaitement dans le cadre
   answerDiv.addEventListener('wheel', testResize);
   testNouvelleFenetre();
 }
 
 function afficherGrapheNouvelleFenetre(element){
   var strWindowFeatures = "";
-  let rand = Math.floor(Math.random() * 1000); //Test de fenêtres avec un nom différent pour que la deuxième n'écrase pas la première
-  let windowObjectReference = window.open(`template.html#${rand}`, `testGraph${rand}`, strWindowFeatures);
-  //let templateHTML = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Template</title></head><body><div id="graph_links"><button onclick="chargerLiensGraphe();">Afficher les liens :</button><p>Liens : </p></div><div id="server_answer"></div><script src="../javascript/node_modules/viz.js/viz.js"></script><script src="../javascript/node_modules/viz.js/full.render.js"></script><script src="../javascript/ajax.js"></script><script src="../javascript/requeteHTTP.js"></script></body></html>';
-  //let templateHTML = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"/><title>Template</title></head><body><header><div id="enTete"> <img src="Obviews.jpeg" alt="Obviews" /> </div><nav><ul><li><a href="index.html">Accueil</a></li><li><a href="zone-de-test.html">Zone de test</a></li><li><a href="about.html">mode d'emploi</a></li></ul></nav></header><div id="server_answer"></div><footer>More information : <br><ul><li><a href="about.html">About</a></li></ul></footer><script src="../javascript/node_modules/viz.js/viz.js"></script><script src="../javascript/node_modules/viz.js/full.render.js"></script><script src="../javascript/ajax.js"></script><script src="../javascript/requeteHTTP.js"></script><script src="../javascript/interactiveDOM.js"></script></body></html>`;
-  let templateHTML = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"/><title>Template</title></head><body><div id="server_answer"></div><script src="../javascript/node_modules/viz.js/viz.js"></script><script src="../javascript/node_modules/viz.js/full.render.js"></script><script src="../javascript/ajax.js"></script><script src="../javascript/requeteHTTP.js"></script><script src="../javascript/interactiveDOM.js"></script></body></html>`;
+  let graphHTML = document.createElement("p");
+  graphHTML.append(element);
+  traitementReponseHTML(graphHTML);
+  let graphTitle = obtenirTitreGraphe(graphHTML);
+  console.log(graphTitle);
+  let windowObjectReference = window.open(`template.html#${graphTitle}`, `testGraph${graphTitle}`, strWindowFeatures);
+  let templateHTML = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"/><title>Template</title></head><body id="graph_body"><header><div id="enTete"> <img src="Obviews.jpeg" alt="Obviews" /> </div><nav><ul><li><a href="index.html">Accueil</a></li><li><a href="zone-de-test.html">Zone de test</a></li><li><a href="about.html">mode d'emploi</a></li></ul></nav></header><div id="graph_border"><div id="graph_frame"><div id="server_answer"></div></div></div><footer>More information : <br><ul><li><a href="about.html">About</a></li></ul></footer><script src="../javascript/node_modules/viz.js/viz.js"></script><script src="../javascript/node_modules/viz.js/full.render.js"></script><script src="../javascript/ajax.js"></script><script src="../javascript/requeteHTTP.js"></script><script src="../javascript/interactiveDOM.js"></script></body></html>`;
   windowObjectReference.document.write(templateHTML);
   windowObjectReference.document.close(); //Si il manque le close(), la page n'est pas prévenue de l'arret des modifications et peut ne pas se charger
   let answerDiv = windowObjectReference.document.getElementById(ID_REPONSE_SERVEUR);
   answerDiv.append(element);
   traitementReponseHTML(answerDiv);
   traitementGraphHTML(answerDiv);
-  let graphHTML = answerDiv.innerHTML;
-  answerDiv.innerHTML = `<header><div id="enTete"> <img src="Obviews.jpeg" alt="Obviews" /> </div><nav><ul><li><a href="index.html">Accueil</a></li><li><a href="zone-de-test.html">Zone de test</a></li><li><a href="about.html">mode d'emploi</a></li></ul></nav></header>`;
-  answerDiv.innerHTML = answerDiv.innerHTML + graphHTML;
-  answerDiv.innerHTML = answerDiv.innerHTML + `<br><footer>More information : <br><ul><li><a href="about.html">About</a></li></ul></footer>`;
-  answerDiv.style.transform = "scale(0.9, 0.9)";
+  let graphWidth = obtenirLargeurGraphe(answerDiv)*1.33;
+  let graphHeight = obtenirHauteurGraphe(answerDiv)*1.33;
+  //console.log(graphWidth);
+  //console.log(graphHeight);
+  let graphWidthScale = GRAPH_WIDTH/graphWidth;
+  let graphHeightScale = GRAPH_HEIGHT/graphHeight;
+  let newScale = Math.min(graphWidthScale, graphHeightScale);
+  answerDiv.style.transform = `scale(${newScale})`;
+  /*
+  answerDiv.style.left = "650px";
+  answerDiv.style.top = "400px";
+  console.log(answerDiv.offsetLeft);
+  console.log(answerDiv.offsetTop);
+  answerDiv.style.left = "365px";
+  answerDiv.style.top = "130px";
+  console.log(answerDiv.style.left);
+  console.log(answerDiv.style.top);
+  */
+  let monSVG = windowObjectReference.document.getElementsByTagName("svg")[0];
+  let monGraphe = windowObjectReference.document.getElementById("graph0");
+  monSVG.offsetLeft = "200px";
+  console.log(monSVG.offsetLeft);
+  monGraphe.style.left = "400px";
+  console.log(monGraphe.style.left);
+  //monSVG.style.transform = "translate(0 0)";
+  monGraphe.style.transform = "translate(0 0)";
   answerDiv.addEventListener('wheel', testResize);
   
 }
@@ -95,6 +120,21 @@ function arbreLiens(html){
     let linkTarget = trouverCibleLien(myLink);
     let newHTML = graphToHTML()
   });
+}
+
+function obtenirLargeurGraphe(answerDiv){
+  var str = answerDiv.innerHTML.toString();
+  return (str.match(/width="([^\#]*?)"/)[1]).replace(/pt/g, '');
+}
+
+function obtenirTitreGraphe(div){
+  var str = div.innerHTML.toString();
+  return (str.match(/\<title\>([^\#]*?)\<\/title\>/)[1]).replace(/pt/g, '');
+}
+
+function obtenirHauteurGraphe(answerDiv){
+  var str = answerDiv.innerHTML.toString();
+  return (str.match(/height="([^\#]*?)"/)[1]).replace(/pt/g, '');
 }
 
 function traitementReponseHTML(answerDiv){

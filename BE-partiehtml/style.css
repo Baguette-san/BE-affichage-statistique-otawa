@@ -80,18 +80,35 @@ section
     text-align: center;
 }
 
-#server_answer{
-    position: absolute;
+#graph_body{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items:  center;
 }
 
-#testCadre{
-    border: black;
-    border-style: solid;
-    border-width: 2px;
-    height: 700px;
-    width: 700px;
-    overflow: hidden;
+#server_answer{
+    position: absolute;
+    /*background-color: red;*/
 }
+
+#graph_border{
+    border: solid black 3px;
+    background-color:  white;
+    height: 1000px;
+    width: 800px;
+}
+
+#graph_frame{
+    /*clip-path: polygon(626px 463px,765px 236px,687px 31px,271px 100px,70px 10px,49px 250px,133px 406px,374px 462px,529px 393px);*/
+    clip-path: polygon(0px 0px,800px 0px,800px 1000px,0px 1000px);
+    /*background-color: green;*/
+    background-color:  white;
+    height: 1000px;
+    width: 800px;
+}
+
+
 
 footer
 {
@@ -108,5 +125,4 @@ footer
 footer li
 {
     list-style-type: none;
-
 }

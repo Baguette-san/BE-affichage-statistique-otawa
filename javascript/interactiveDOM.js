@@ -3,8 +3,6 @@ var offset = [0,0];
 var isDown = false;
 var div = document.getElementById("server_answer");
 
-console.log("Interactivité Jamy !");
-
 div.addEventListener('mousedown', function(e) {
     isDown = true;
     offset = [
