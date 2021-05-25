@@ -2,6 +2,8 @@ var ID_NOM_FICHIER = "inputBinaire";
 var ID_REPONSE_SERVEUR = "server_answer";
 var GRAPH_WIDTH = 800;
 var GRAPH_HEIGHT = 1000;
+var ADDRESSE_IP = "127.0.0.1";
+var NUM_PORT = "8000";
 
 //Pour la fonction de coloration
 var labels = ['ipet-total_time', 'ipet-total_count', ]; 
@@ -66,7 +68,7 @@ function afficherGrapheNouvelleFenetre(element){
   let graphTitle = obtenirTitreGraphe(graphHTML);
   console.log(graphTitle);
   let windowObjectReference = window.open(`template.html#${graphTitle}`, `testGraph${graphTitle}`, strWindowFeatures);
-  let templateHTML = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"/><title>Template</title></head><body id="graph_body"><header><div id="enTete"> <img src="Obviews.jpeg" alt="Obviews" /> </div><nav><ul><li><a href="index.html">Accueil</a></li><li><a href="zone-de-test.html">Zone de test</a></li><li><a href="about.html">mode d'emploi</a></li></ul></nav></header><div id="graph_border"><div id="graph_frame"><div id="server_answer"></div></div></div><footer>More information : <br><ul><li><a href="about.html">About</a></li></ul></footer><script src="../javascript/node_modules/viz.js/viz.js"></script><script src="../javascript/node_modules/viz.js/full.render.js"></script><script src="../javascript/ajax.js"></script><script src="../javascript/requeteHTTP.js"></script><script src="../javascript/interactiveDOM.js"></script></body></html>`;
+  let templateHTML = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"/><title>Template</title></head><body id="graph_body"><header><div id="enTete"> <img src="Obviews.jpeg" alt="Obviews" /> </div><nav><ul><li><a href="index.html">Accueil</a></li><li><a href="zone-de-test.html">Zone de test</a></li><li><a href="about.html">mode d'emploi</a></li></ul></nav></header><div id="graph_links">Liens</div><div id="graph_border"><div id="graph_frame"><div id="server_answer"></div></div></div><footer>More information : <br><ul><li><a href="about.html">About</a></li></ul></footer><script src="../javascript/node_modules/viz.js/viz.js"></script><script src="../javascript/node_modules/viz.js/full.render.js"></script><script src="../javascript/ajax.js"></script><script src="../javascript/requeteHTTP.js"></script><script src="../javascript/graphScripts.js"></script></body></html>`;
   windowObjectReference.document.write(templateHTML);
   windowObjectReference.document.close(); //Si il manque le close(), la page n'est pas prévenue de l'arret des modifications et peut ne pas se charger
   let answerDiv = windowObjectReference.document.getElementById(ID_REPONSE_SERVEUR);
@@ -188,8 +190,8 @@ function remplacerLiensDansHTML(html, newLink){
 
 
 function displaySources(reponse){
-  clearDisplay();
-  var answerDiv = document.getElementById(ID_REPONSE_SERVEUR);
+  clearDisplay("source_code");
+  var answerDiv = document.getElementById("source_code");
   var answerHTML = document.createElement("p");
   answerHTML.innerHTML = reponse;
   answerDiv.appendChild(answerHTML);
@@ -199,8 +201,8 @@ function displaySources(reponse){
 }
 
 function displayCode(reponse){
-  clearDisplay();
-  var answerDiv = document.getElementById(ID_REPONSE_SERVEUR);
+  clearDisplay("source_code");
+  var answerDiv = document.getElementById("source_code");
   var answerHTML = document.createElement("p");
   answerHTML.innerHTML = reponse;
   answerDiv.appendChild(answerHTML);
@@ -245,8 +247,8 @@ function testResize(evt){
   console.log(newScaleValue);
 }
 
-function clearDisplay(){
-  let answerDiv = document.getElementById(ID_REPONSE_SERVEUR);
+function clearDisplay(divName){
+  let answerDiv = document.getElementById(divName);
   answerDiv.innerText = "";
 }
 
@@ -292,6 +294,7 @@ function chargerLiensGraphe(){
 function afficherLiensGraphe(reponse){
   let liens = JSON.parse(reponse);
   let divLiens = document.getElementById("graph_links");
+  divLiens.innerHTML = "<p>Liens :<br>"
 
   liens.forEach(function(lien){
     //divLiens.innerHTML = divLiens.innerHTML + `<p>${lien.id}</p>`;
@@ -299,6 +302,7 @@ function afficherLiensGraphe(reponse){
    divLiens.innerHTML = divLiens.innerHTML + `<a href="javascript:getGraphData('${lien.id}')"  name="voir_graphe">${lien.label} (${lien.id})</a><br>`;
 
   });
+  divLiens.innerHTML = divLiens.innerHTML + "</p>";
 }
 
 function colorize(backs, label) { 
@@ -309,3 +313,38 @@ function colorize(backs, label) {
     trs[i].style.color = foregrounds[backs[i]]; 
   } 
 } 
+
+function changeNumPort(){
+  let newNumPort = document.getElementById("numPort").value;
+  /*
+  let url = `http://${ADDRESSE_IP}:${NUM_PORT}/`;
+  ajaxGet(url);
+  NUM_PORT = newNumPort;
+  */
+}
+
+function doNothing(){
+  console.log("...");
+}
+
+function changePathRepertory(){
+  let pathRepertory = document.getElementById("pathRepertory").value;
+  let url = `http://${ADDRESSE_IP}:${NUM_PORT}/set?work-dir=${pathRepertory}`;
+  console.log("change repertory path to : " + pathRepertory);
+  ajaxGet(url, updateInfos);
+}
+
+function updateInfos(){
+  let url = `http://${ADDRESSE_IP}:${NUM_PORT}/get?otawa-dir&work-dir`;
+  ajaxGet(url, changePathInfos);
+}
+
+function changePathInfos(reponse){
+  let pathRepertoryDiv = document.getElementById("pathRepertory");
+  let infosServeur = document.getElementById("infosServeur");
+  let pathValues = JSON.parse(reponse);
+  let workdirPath = pathValues["work-dir"];
+  let otawadirPath = pathValues["otawa-dir"];
+  pathRepertoryDiv.value = workdirPath;
+  infosServeur.innerHTML = `<p>Infos :<br>Chemin de l'installation d'Otawa : ${otawadirPath}<br>Chemin répertoire de travail : ${workdirPath}</p>`;
+}

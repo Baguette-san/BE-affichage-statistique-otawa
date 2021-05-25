@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="style.css"/>
         <title> Accueil </title>
     </head>
-    <body>
+    <body onload="updateInfos();">
         <header>
             <div id="enTete"> <img src="Obviews.jpeg" alt="Obviews" /> </div>
             <nav>
@@ -23,18 +23,27 @@
             <div id="titreSection">
                 <h1>Otawa en mode automatique</h1>
             </div>
+            <div id="infosServeur">
+            </div>
             <div id="corpDeSection">
                 <p>
                     <br> Veuillez entrer le chemin de votre fichier binaire : <br><br>
                     <input type="text" id="inputBinaire" >
+                    <br><br>
+                    <br> Veuillez entrer le chemin de votre répertoire de travail : <br><br>
+                    <input type="text" id="pathRepertory" ><button onclick="changePathRepertory();">Valider</button>
+                    <!--
+                    <br><br>
+                    Entrez un nouveau numéro de port : <input type="text" id="numPort" style="width: 50px"> <button onclick="changeNumPort();">Valider</button>
+                    -->
                     <br><br> ou <br><br>
                     <span><input type="file" id="inputBinaire" ></span>
                     <br><br><button onclick="getData();" name="voir_code">voir code</button>
                     <br><br><button onclick="getGraphData('_0');" name="voir_graphe">voir graphe</button>
                 </p>
             </div>
-            <div id="server_answer">
-                <p>server_answer</p>
+            <div id="source_code">
+                <p>Code source</p>
             </div>
         </section>
         <section class="mode pas à pas">

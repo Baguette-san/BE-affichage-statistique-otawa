@@ -65,6 +65,24 @@ section
     background-color: rgb(182, 129, 231);
     border-radius: 5px;
 }
+
+#infosServeur{
+    margin: auto;
+    background-color: rgb(182, 129, 231);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70%;
+}
+
+#graph_links{
+    border:  black 3px;
+    border-style: solid solid none solid;
+    background-color:  white;
+    width: 800px;
+}
+
 #titreSection h1
 {
     text-align: center;
