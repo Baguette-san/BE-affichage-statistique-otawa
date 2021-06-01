@@ -67,8 +67,9 @@ function afficherGrapheNouvelleFenetre(element){
   traitementReponseHTML(graphHTML);
   let graphTitle = obtenirTitreGraphe(graphHTML);
   console.log(graphTitle);
+  let colorationHTML = setColorationHTML();
   let windowObjectReference = window.open(`template.html#${graphTitle}`, `testGraph${graphTitle}`, strWindowFeatures);
-  let templateHTML = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><link rel="stylesheet" href="style.css"/><title>Template</title></head><body id="graph_body"><header><div id="enTete"> <img src="Obviews.jpeg" alt="Obviews" /> </div><nav><ul><li><a href="index.html">Accueil</a></li><li><a href="zone-de-test.html">Zone de test</a></li><li><a href="about.html">mode d'emploi</a></li></ul></nav></header><div id="graph_links">Liens</div><div id="graph_border"><div id="graph_frame"><div id="server_answer"></div></div></div><footer>More information : <br><ul><li><a href="about.html">About</a></li></ul></footer><script src="../javascript/node_modules/viz.js/viz.js"></script><script src="../javascript/node_modules/viz.js/full.render.js"></script><script src="../javascript/ajax.js"></script><script src="../javascript/requeteHTTP.js"></script><script src="../javascript/graphScripts.js"></script></body></html>`;
+  let templateHTML = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><link rel="stylesheet" href="resources/style.css"/><title>Template</title></head><body id="graph_body"><header><div id="enTete"> <img src="Obviews.jpeg" alt="Obviews" /> </div><nav><ul><li><a href="index.html">Accueil</a></li><li><a href="zone-de-test.html">Zone de test</a></li><li><a href="about.html">mode d'emploi</a></li></ul></nav></header><div id="graph_links">Liens</div>${colorationHTML}<div id="graph_border"><div id="graph_frame"><div id="server_answer"></div></div></div><footer>More information : <br><ul><li><a href="about.html">About</a></li></ul></footer><script src="resources/javascript/node_modules/viz.js/viz.js"></script><script src="resources/javascript/node_modules/viz.js/full.render.js"></script><script src="resources/javascript/ajax.js"></script><script src="resources/javascript/requeteHTTP.js"></script><script src="resources/javascript/graphScripts.js"></script></body></html>`;
   windowObjectReference.document.write(templateHTML);
   windowObjectReference.document.close(); //Si il manque le close(), la page n'est pas prévenue de l'arret des modifications et peut ne pas se charger
   let answerDiv = windowObjectReference.document.getElementById(ID_REPONSE_SERVEUR);
@@ -83,16 +84,6 @@ function afficherGrapheNouvelleFenetre(element){
   let graphHeightScale = GRAPH_HEIGHT/graphHeight;
   let newScale = Math.min(graphWidthScale, graphHeightScale);
   answerDiv.style.transform = `scale(${newScale})`;
-  /*
-  answerDiv.style.left = "650px";
-  answerDiv.style.top = "400px";
-  console.log(answerDiv.offsetLeft);
-  console.log(answerDiv.offsetTop);
-  answerDiv.style.left = "365px";
-  answerDiv.style.top = "130px";
-  console.log(answerDiv.style.left);
-  console.log(answerDiv.style.top);
-  */
   let monSVG = windowObjectReference.document.getElementsByTagName("svg")[0];
   let monGraphe = windowObjectReference.document.getElementById("graph0");
   monSVG.offsetLeft = "200px";
@@ -105,11 +96,41 @@ function afficherGrapheNouvelleFenetre(element){
   
 }
 
+function setColorationHTML(){
+  let colorationHTML = "<br><br><div class='invisible'><label for='coloration'>Type de coloration : </label>";
+  var radios = document.getElementsByName('coloration');
+
+  for (var i = 0, length = radios.length; i < length; i++) {
+    if (radios[i].checked) {
+      colorationHTML += `<input type="radio" name="coloration" value="${radios[i].value}" checked="checked">${radios[i].value}</input>`;
+    }else{
+      colorationHTML += `<input type="radio" name="coloration" value="${radios[i].value}">${radios[i].value}</input>`;
+    }
+  }
+  colorationHTML += "</div>";
+
+  return colorationHTML;
+}
+
+function findColorationValue(){
+  let colorationValue = "";
+  var radios = document.getElementsByName('coloration');
+  var i = 0;
+
+  for (i, length = radios.length; i < length; i++) {
+    if (radios[i].checked) {
+      colorationValue = `${radios[i].value}`;
+    }
+  }
+
+  return [i, colorationValue];
+}
+
 function testNouvelleFenetre(){
   var strWindowFeatures = "";
   let rand = Math.floor(Math.random() * 1000); //Test de fenêtres avec un nom différent pour que la deuxième n'écrase pas la première
   let windowObjectReference = window.open(`template.html#${rand}`, `testGraph${rand}`, strWindowFeatures);
-  let templateHTML = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Template</title></head><body><div id="graph_links" onload="chargerLiensGraphe();"></div><div id="server_answer"><p>tout</p></div><script src="../javascript/node_modules/viz.js/viz.js"></script><script src="../javascript/node_modules/viz.js/full.render.js"></script><script src="../javascript/ajax.js"></script><script src="../javascript/requeteHTTP.js"></script></body></html>';
+  let templateHTML = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Template</title></head><body><div id="graph_links" onload="chargerLiensGraphe();"></div><div id="server_answer"><p>tout</p></div><script src="./javascript/node_modules/viz.js/viz.js"></script><script src="./javascript/node_modules/viz.js/full.render.js"></script><script src="./javascript/ajax.js"></script><script src="./javascript/requeteHTTP.js"></script></body></html>';
   windowObjectReference.document.write(templateHTML);
   windowObjectReference.document.close(); //Si il manque le close(), la page n'est pas prévenue de l'arret des modifications et peut ne pas se charger
 }
@@ -195,7 +216,7 @@ function displaySources(reponse){
   var answerHTML = document.createElement("p");
   answerHTML.innerHTML = reponse;
   answerDiv.appendChild(answerHTML);
-  traitementReponseHTML(answerDiv);
+  //traitementReponseHTML(answerDiv);
   traitementDataHTML(answerDiv);
   console.log(reponse);
 }
@@ -204,9 +225,11 @@ function displayCode(reponse){
   clearDisplay("source_code");
   var answerDiv = document.getElementById("source_code");
   var answerHTML = document.createElement("p");
+  let [colorIndex, colorationValue] = findColorationValue();
   answerHTML.innerHTML = reponse;
   answerDiv.appendChild(answerHTML);
-  traitementReponseHTML(answerDiv);
+  //traitementReponseHTML(answerDiv);
+  colorize(`s${colorIndex}`, `ipet-total_${colorationValue}`);
   console.log(reponse);
 }
 
@@ -249,7 +272,15 @@ function testResize(evt){
 
 function clearDisplay(divName){
   let answerDiv = document.getElementById(divName);
-  answerDiv.innerText = "";
+  answerDiv.innerText = '';
+}
+
+function testRemplissageDiv(divName){
+  clearDisplay(divName);
+  let maDiv = document.getElementById(divName);
+  var remplissageHTML = document.createElement("p");
+  remplissageHTML.innerHTML = "<p>Remplissage</p>";
+  maDiv.appendChild(remplissageHTML);
 }
 
 function getData(){
@@ -269,6 +300,16 @@ function getSources(){
 
 function getGraphData(graphName){
   let typeColoration = "count";
+
+  var radios = document.getElementsByName('coloration');
+
+  for (var i = 0, length = radios.length; i < length; i++) {
+    if (radios[i].checked) {
+      typeColoration = radios[i].value;
+      break;
+    }
+  }
+
   var url = `http://127.0.0.1:8000/stats/cfg/${graphName}?colored_by=${typeColoration}`;
   //var url = `http://127.0.0.1:8000/stats/cfg`;
   ajaxGet(url, displayGraph);

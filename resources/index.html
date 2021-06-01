@@ -2,7 +2,7 @@
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="style.css"/>
+        <link rel="stylesheet" href="resources/style.css"/>
         <title> Accueil </title>
     </head>
     <body onload="updateInfos();">
@@ -32,12 +32,10 @@
                     <br><br>
                     <br> Veuillez entrer le chemin de votre répertoire de travail : <br><br>
                     <input type="text" id="pathRepertory" ><button onclick="changePathRepertory();">Valider</button>
-                    <!--
                     <br><br>
-                    Entrez un nouveau numéro de port : <input type="text" id="numPort" style="width: 50px"> <button onclick="changeNumPort();">Valider</button>
-                    -->
-                    <br><br> ou <br><br>
-                    <span><input type="file" id="inputBinaire" ></span>
+                    <label for="coloration">Type de coloration : </label>
+                    <input type="radio" name="coloration" value="time" checked="checked">time</input>
+                    <input type="radio" name="coloration" value="count">count</input>
                     <br><br><button onclick="getData();" name="voir_code">voir code</button>
                     <br><br><button onclick="getGraphData('_0');" name="voir_graphe">voir graphe</button>
                 </p>
@@ -45,6 +43,7 @@
             <div id="source_code">
                 <p>Code source</p>
             </div>
+            
         </section>
         <section class="mode pas à pas">
             <div id="titreSection">
@@ -63,9 +62,9 @@
                 <li><a href="about.html">About</a></li>
             </ul>
         </footer>
-        <script src="../javascript/node_modules/viz.js/viz.js"></script>
-        <script src="../javascript/node_modules/viz.js/full.render.js"></script>
-        <script src="../javascript/ajax.js"></script>
-        <script src="../javascript/requeteHTTP.js"></script>
+        <script src="resources/javascript/node_modules/viz.js/viz.js"></script>
+        <script src="resources/javascript/node_modules/viz.js/full.render.js"></script>
+        <script src="resources/javascript/ajax.js"></script>
+        <script src="resources/javascript/requeteHTTP.js"></script>
     </body>
 </html>
